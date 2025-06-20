@@ -1,8 +1,8 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { Book } from "../models/book.model";
-import { IBook } from "../interfaces/book.interface";
 
 export const bookRoutes = express.Router();
+
 
 // create a book 
 bookRoutes.post("/", async (req: Request, res: Response) => {
@@ -19,10 +19,7 @@ bookRoutes.post("/", async (req: Request, res: Response) => {
     res.status(400).json({
       message: "Validation failed",
       success: false,
-      error: {
-        name: error.name,
-        errors: error.errors,
-      },
+      error: error.name === "ValidationError" ? { name: error.name, errors: error.errors } : error
     });
   }
 });
@@ -43,10 +40,108 @@ bookRoutes.get("/", async (req: Request, res: Response) => {
       data: books,
     });
   } catch (error: any) {
-    res.status(500).json({
+    res.status(400).json({
       success: false,
-      message: "Error occurred!",
-      error: error.message,
+      message: "Invalid Query Error",
+      error: error,
     });
   }
 });
+
+// get single book 
+
+bookRoutes.get("/:bookId", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const bookId = req.params.bookId
+    const existingBook = await Book.isBookExists(bookId)
+
+    if (existingBook) {
+      const book = await Book.findById(bookId)
+      res.status(201).json(
+        {
+          success: true,
+          message: "Book retrieved successfully",
+          data: book,
+        })
+    } else {
+      res.status(404).json(
+        {
+          success: false,
+          message: "Book Does Not Exists",
+          data: {},
+        })
+    }
+  } catch (error: any) {
+    // console.log(error)
+    next(error)
+  }
+})
+
+// update a book
+
+bookRoutes.patch("/:bookId", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const bookId = req.params.bookId
+    const updatedBookParameters = req.body;
+
+    const existingBook = await Book.isBookExists(bookId)
+
+    if (existingBook) {
+      const updatedBook = await Book.findByIdAndUpdate(bookId, updatedBookParameters, { new: true, runValidators: true })
+
+      res.status(200).json(
+        {
+          success: true,
+          message: "Book Updated successfully",
+          data: updatedBook,
+        })
+    } else {
+      res.status(404).json(
+        {
+          success: false,
+          message: "Book Does Not Exists",
+          data: {},
+        })
+    }
+
+
+  } catch (error: any) {
+    res.status(400).json({
+      message: "Validation failed",
+      success: false,
+      error: error.name === "ValidationError" ? { name: error.name, errors: error.errors } : error
+    });
+  }
+})
+
+// delete a book 
+
+bookRoutes.delete("/:bookId", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const bookId = req.params.bookId
+
+    const existingBook = await Book.isBookExists(bookId)
+
+    if (existingBook) {
+      await Book.findByIdAndDelete(bookId)
+
+      res.status(200).json(
+        {
+          success: true,
+          message: "Book deleted successfully",
+          data: null,
+        })
+    } else {
+      res.status(404).json(
+        {
+          success: false,
+          message: "Book Does Not Exists",
+          data: {},
+        })
+    }
+
+  } catch (error: any) {
+    next(error)
+  }
+})
+
