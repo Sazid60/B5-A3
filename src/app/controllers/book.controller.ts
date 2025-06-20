@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import { Book } from "../models/book.model";
+import { createBookZodSchema, updateBookZodSchema } from "../validators/book.zod.validator";
 
 export const bookRoutes = express.Router();
 
@@ -7,7 +8,7 @@ export const bookRoutes = express.Router();
 // create a book 
 bookRoutes.post("/", async (req: Request, res: Response) => {
   try {
-    const body = req.body;
+    const body = await createBookZodSchema.parseAsync(req.body)
     const book = await Book.create(body);
 
     res.status(201).json({
@@ -82,7 +83,7 @@ bookRoutes.get("/:bookId", async (req: Request, res: Response, next: NextFunctio
 bookRoutes.patch("/:bookId", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const bookId = req.params.bookId
-    const updatedBookParameters = req.body;
+    const updatedBookParameters = await updateBookZodSchema.parseAsync(req.body);
 
     const existingBook = await Book.isBookExists(bookId)
 
@@ -103,7 +104,6 @@ bookRoutes.patch("/:bookId", async (req: Request, res: Response, next: NextFunct
           data: {},
         })
     }
-
 
   } catch (error: any) {
     res.status(400).json({
@@ -139,7 +139,6 @@ bookRoutes.delete("/:bookId", async (req: Request, res: Response, next: NextFunc
           data: {},
         })
     }
-
   } catch (error: any) {
     next(error)
   }
