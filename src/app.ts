@@ -1,5 +1,6 @@
 import express, { Application, NextFunction, Request, Response } from "express";
 import { bookRoutes } from "./app/controllers/book.controller";
+import { borrowRoutes } from "./app/controllers/borrow.controller";
 
 const app: Application = express();
 
@@ -8,6 +9,9 @@ app.use(express.json());
 // routes
 app.use("/api/books", bookRoutes);
 
+app.use("/api/borrow", borrowRoutes);
+
+// common route
 app.get("/", (req: Request, res: Response) => {
   res.send("Welcome To Library Application");
 });
