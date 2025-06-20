@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import { Book } from "../models/book.model";
+import { IBook } from "../interfaces/book.interface";
 
 export const bookRoutes = express.Router();
 
@@ -27,23 +28,25 @@ bookRoutes.post("/", async (req: Request, res: Response) => {
 });
 
 // get all books 
-
 bookRoutes.get("/", async (req: Request, res: Response) => {
   try {
-    const books = await Book.find()
+    const { filter, sortBy = "createdAt", sort = "asc", limit = "0" } = req.query;
+    const query = filter ? { genre: filter } : {};
 
-    console.log(books)
+    const books = await Book.find(query).sort({ [sortBy as string]: sort === "asc" ? 1 : -1 }).limit(parseInt(limit as string));
+
+    // const books = await Book.find()
 
     res.status(200).json({
       success: true,
       message: "Books retrieved successfully",
-      data: books
-    })
+      data: books,
+    });
   } catch (error: any) {
-    res.status(404).json({
-      message: "Error Occured !",
+    res.status(500).json({
       success: false,
-      error: error
+      message: "Error occurred!",
+      error: error.message,
     });
   }
-})
+});
