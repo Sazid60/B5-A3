@@ -1,13 +1,12 @@
 import express, { Request, Response } from "express";
 import { Book } from "../models/book.model";
-import { createBookZodSchema } from "../validations/book.zod.validation";
 
 export const bookRoutes = express.Router();
 
+// create a book 
 bookRoutes.post("/", async (req: Request, res: Response) => {
   try {
     const body = req.body;
-    // const zodBody = await createBookZodSchema.parseAsync(req.body);
     const book = await Book.create(body);
 
     res.status(201).json({
@@ -26,3 +25,25 @@ bookRoutes.post("/", async (req: Request, res: Response) => {
     });
   }
 });
+
+// get all books 
+
+bookRoutes.get("/", async (req: Request, res: Response) => {
+  try {
+    const books = await Book.find()
+
+    console.log(books)
+
+    res.status(200).json({
+      success: true,
+      message: "Books retrieved successfully",
+      data: books
+    })
+  } catch (error: any) {
+    res.status(404).json({
+      message: "Error Occured !",
+      success: false,
+      error: error
+    });
+  }
+})
