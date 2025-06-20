@@ -27,8 +27,16 @@ const borrowSchema = new Schema<IBorrowBooks, BorrowLogicStatic>(
     }
 );
 
+// pre hook
+borrowSchema.pre("save", async function (next) {
+    const book = await Book.findById(this.book);
+    if (!book) throw new Error("Book Do Not Exist!")
 
+    if (book.copies < this.quantity) throw new Error("No More Books Available To Borrow!")
+    next()
+});
 
+// static method
 borrowSchema.static("deductCopies", async function (bookId: string, quantity: number) {
     const book = await Book.findById(bookId);
     if (book) {
@@ -40,6 +48,11 @@ borrowSchema.static("deductCopies", async function (bookId: string, quantity: nu
 
         return updatedBook
     }
+});
+
+// post hook
+borrowSchema.post("save", async function () {
+    await Borrow.deductCopies(this.book.toString(), this.quantity)
 });
 
 

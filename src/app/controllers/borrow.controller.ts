@@ -14,28 +14,23 @@ borrowRoutes.post("/", async (req: Request, res: Response) => {
     try {
         const body = await createBorrowZodSchema.parseAsync(req.body)
 
-        const existingBook = await Book.isBookExists(body.book)
+        const borrow = await Borrow.create(body);
 
-        if (!existingBook) { res.status(404).json({ success: false, message: "Book Does Not Exists", data: {} }) }
+        res.status(201).json({ success: true, message: "Book borrowed successfully", data: borrow });
 
-        const book = await Book.findOne({ _id: body.book })
-
-        if (book) {
-            if (book.copies < body.quantity) {
-                res.status(400).json({ success: false, message: "No More Books Available To Borrow!" })
-            } else {
-                // use of static method to update Book
-                await Borrow.deductCopies(body.book, body.quantity)
-                const borrow = await Borrow.create(body);
-                res.status(201).json({ success: true, message: "Book borrowed successfully", data: borrow });
-            }
-        }
     } catch (error: any) {
-        res.status(400).json(
-            {
-                message: "Validation failed", success: false,
-                error: error.name === "ValidationError" ? { name: error.name, errors: error.errors } : error
-            })
+
+        if (error.message === "Book Do Not Exist!") {
+
+            { res.status(404).json({ success: false, message: error.message, data: {} }) }
+
+        } else if (error.message === "No More Books Available To Borrow!") {
+
+            res.status(404).json({ success: false, message: error.message, data: {} })
+
+        } else if (error.name === "ValidationError") {
+            res.status(400).json({ message: "Validation failed", success: false, error: { name: error.name, errors: error.errors } })
+        }
     }
 })
 
