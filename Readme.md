@@ -77,3 +77,9 @@ PORT= <Port Number of local host>
 MONGO_URI= <Mongodb URI>
 
 ```
+
+4. **Run The Project**
+
+```bash
+npm run dev
+```
