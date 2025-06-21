@@ -21,6 +21,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   res.status(404).json({
     success: false,
     message: "Route Not Found !",
+    error: {}
   });
 });
 
@@ -30,7 +31,8 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
   if (error) {
     console.log("Error:", error);
     res.status(400).json({
-      message: "Something went Wrong From Global error handler!",
+      message: "Something went Wrong!",
+      success: false,
       error,
     });
   }
