@@ -42,8 +42,8 @@ bookRoutes.get("/", async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     res.status(400).json({
-      success: false,
       message: "Invalid Query Error",
+      success: false,
       error: error,
     });
   }
@@ -58,7 +58,7 @@ bookRoutes.get("/:bookId", async (req: Request, res: Response, next: NextFunctio
 
     if (existingBook) {
       const book = await Book.findById(bookId)
-      res.status(201).json(
+      res.status(200).json(
         {
           success: true,
           message: "Book retrieved successfully",
@@ -67,8 +67,8 @@ bookRoutes.get("/:bookId", async (req: Request, res: Response, next: NextFunctio
     } else {
       res.status(404).json(
         {
-          success: false,
           message: "Book Does Not Exists",
+          success: false,
           data: {},
         })
     }
@@ -99,8 +99,8 @@ bookRoutes.put("/:bookId", async (req: Request, res: Response, next: NextFunctio
     } else {
       res.status(404).json(
         {
-          success: false,
           message: "Book Does Not Exists",
+          success: false,
           data: {},
         })
     }
@@ -134,8 +134,8 @@ bookRoutes.delete("/:bookId", async (req: Request, res: Response, next: NextFunc
     } else {
       res.status(404).json(
         {
-          success: false,
           message: "Book Does Not Exists",
+          success: false,
           data: {},
         })
     }

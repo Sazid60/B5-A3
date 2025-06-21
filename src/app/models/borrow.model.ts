@@ -32,7 +32,7 @@ borrowSchema.pre("save", async function (next) {
     const book = await Book.findById(this.book);
     if (!book) throw new Error("Book Do Not Exist!")
 
-    if (book.copies < this.quantity) throw new Error("No More Books Available To Borrow!")
+    if (book.copies < this.quantity) throw new Error("Not Enough Book Copies Available!")
     next()
 });
 

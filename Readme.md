@@ -103,14 +103,15 @@ https://b5-a3-sazid.vercel.app/api/books
 
 ```json
 {
-  "title": "The Theory of Everything",
-  "author": "Stephen Hawking",
+  "title": "Steve Jobs",
+  "author": "Walter Isaacson",
   "genre": "SCIENCE",
-  "isbn": "9780553380163",
-  "description": "An overview of cosmology and black holes.",
-  "copies": 5,
+  "isbn": "9781451648539",
+  "description": "A comprehensive biography of the Apple co-founder based on interviews and insider accounts.",
+  "copies": 6,
   "available": true
 }
+
 ```
 
 - If we hit with this data book data inside body It will create the book with unique isbn number and send a success response. If any validation error or duplication occurs it will show error and will also show duplicate data error.
@@ -144,6 +145,7 @@ https://b5-a3-sazid.vercel.app/api/books?filter=SCIENCE&sortBy=createdAt&sort=de
 ```
 https://b5-a3-sazid.vercel.app/api/books/6856ae72cc2dae1d909abd35
 ```
+**Change The Id**
 
 - If we hit this url it will show the book we have targeted. 
 - If the id is not valid it will show cast error.
@@ -158,6 +160,7 @@ https://b5-a3-sazid.vercel.app/api/books/6856ae72cc2dae1d909abd35
 ```
 https://b5-a3-sazid.vercel.app/api/books/6856ae72cc2dae1d909abd35
 ```
+**Change The Id**
 
 - Data Inside Body  : 
 
@@ -179,6 +182,7 @@ https://b5-a3-sazid.vercel.app/api/books/6856ae72cc2dae1d909abd35
 ```
 https://b5-a3-sazid.vercel.app/api/books/6856ae72cc2dae1d909abd35
 ```
+**Change The Id**
 
 - If we hit this api with proper id it will delete the data from the database
 - Cast error, route error and non existing data error will  show if any error happens. 
@@ -201,6 +205,8 @@ https://b5-a3-sazid.vercel.app/api/borrow
   "dueDate": "2025-07-18T00:00:00.000Z"
 }
 ```
+**Change The book Id**
+
 - A book can be borrowed by hitting this api. 
 - There are some business logic like If quantity is less than the books copies then only a book can be borrowed
 - If Book Is Borrowed the copies from the book will be reduced

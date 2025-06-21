@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express';
 import { createBorrowZodSchema } from '../validators/borrow.zod.validator';
 import { Borrow } from '../models/borrow.model';
-import { Book } from '../models/book.model';
 import { ZodError } from 'zod';
 
 
@@ -23,12 +22,11 @@ borrowRoutes.post("/", async (req: Request, res: Response) => {
 
         if (error.message === "Book Do Not Exist!") {
 
-            { res.status(404).json({ success: false, message: error.message, error: {} }) }
+            { res.status(404).json({ message: error.message, success: false, error: {} }) }
 
-        } else if (error.message === "No More Books Available To Borrow!") {
-
-            res.status(404).json({ success: false, message: error.message, error: {} })
-        } else if (ZodError) {
+        } else if (error.message === "Not Enough Book Copies Available!") {
+            res.status(400).json({ message: error.message, success: false, error: {} })
+        } else if (error instanceof ZodError) {
             res.status(400).json({ message: "Validation failed", success: false, error: error })
         } else if (error.name === "ValidationError") {
             res.status(400).json({ message: "Validation failed", success: false, error: { name: error.name, errors: error.errors } })
@@ -74,7 +72,7 @@ borrowRoutes.get("/", async (req: Request, res: Response) => {
 
         // console.log(summary)
 
-        res.status(201).json({ success: true, message: "Borrowed books summary retrieved successfully", data: summary });
+        res.status(200).json({ success: true, message: "Borrowed books summary retrieved successfully", data: summary });
 
     } catch (error: any) {
         res.status(500).json({
