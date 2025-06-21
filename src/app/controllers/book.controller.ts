@@ -80,7 +80,7 @@ bookRoutes.get("/:bookId", async (req: Request, res: Response, next: NextFunctio
 
 // update a book
 
-bookRoutes.patch("/:bookId", async (req: Request, res: Response, next: NextFunction) => {
+bookRoutes.put("/:bookId", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const bookId = req.params.bookId
     const updatedBookParameters = await updateBookZodSchema.parseAsync(req.body);
