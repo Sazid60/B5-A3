@@ -28,7 +28,7 @@ bookRoutes.post("/", async (req: Request, res: Response) => {
 // get all books 
 bookRoutes.get("/", async (req: Request, res: Response) => {
   try {
-    const { filter, sortBy = "createdAt", sort = "asc", limit = "0" } = req.query;
+    const { filter, sortBy = "createdAt", sort = "asc", limit = "10" } = req.query;
     const query = filter ? { genre: filter } : {};
 
     const books = await Book.find(query).sort({ [sortBy as string]: sort === "asc" ? 1 : -1 }).limit(parseInt(limit as string));
